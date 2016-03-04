@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -20,7 +21,36 @@ import java.util.logging.Logger;
  * @author clebermaruiti
  */
 public class Agenda {
-   private Connection obterConexao() throws SQLException, ClassNotFoundException {
+    
+      public static void main(String[] args) {
+        Agenda ag = new Agenda();
+        Scanner sc = new Scanner(System.in);
+        int n = 1;
+
+        System.out.println("=============MENU=============");
+        System.out.println("1-Inserir um contato");
+        System.out.println("2-Alterar um contato");
+        System.out.println("3-Consultar um contato");
+        System.out.println("4-Remover um contato");
+        System.out.println("5-Listar contatos");
+        System.out.println("6-Sair");
+        
+
+        while (n != 6) {
+            System.out.println("Digite uma opção do menu:");
+        n = sc.nextInt(n);
+
+            switch (n) {
+                case 1:
+                        ag.listarPessoas();
+                    default:
+                        System.out.println("Erro");
+
+            }
+        }
+    }
+    
+    private Connection obterConexao() throws SQLException, ClassNotFoundException {
         Connection conn = null;
         // Passo 1: Registrar driver JDBC.
         Class.forName("org.apache.derby.jdbc.ClientDataSource");
@@ -31,10 +61,14 @@ public class Agenda {
                 "app", // usuario
                 "app"); // senha
         return conn;
-    }   
+    }
+
+    public void inserirPessoas() {
+
+    }
 
     public void listarPessoas() {
-        
+
         Statement stmt = null;
         Connection conn = null;
 
@@ -77,5 +111,3 @@ public class Agenda {
         }
     }
 }
-
-
