@@ -8,16 +8,19 @@ package br.senac.tads.pi3.clebermaruiti.agenda;
 import com.sun.org.apache.bcel.internal.generic.TABLESWITCH;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Optional;
+import sun.util.resources.CalendarData;
 
 /**
  *
@@ -73,13 +76,15 @@ public class Agenda {
     }
 
     public void inserirPessoas() {
-        Statement stmt = null;
+//        Statement stmt = null;
+        PreparedStatement stmt = null;
         Connection conn = null;
         Long id;
         String nome;
         String dataNasc;
         String email;
         String telefone;
+        Calendar dataAtual = Calendar.getInstance();
         System.out.println("Digite o nome do contato");
         nome = sc.next();
         System.out.println("Digite a data de nascimento do contato");
@@ -88,28 +93,32 @@ public class Agenda {
         telefone = sc.next();
         System.out.println("Digite o email do contato");
         email = sc.next();
-
+        
         try {
 
             //Abrindo a conexão
             conn = obterConexao();
-            stmt = conn.createStatement();
-
             //Executa a query de inserção
-            java.sql.Statement st = conn.createStatement();
-            st.executeUpdate("INSERT INTO TB_CONTATO (NM_CONTATO,DT_NASCIMENTO, VL_TELEFONE, VL_EMAIL, DT_CADASTRO) VALUES ("
-                    + nome + ",'"
-                    + dataNasc + "','"
-                    + telefone + "','"
-                    + email + "')");
-
+//            java.sql.Statement st = conn.createStatement();
+            
+            String sql = ("insert into TB_CONTATO" + "(NM_CONTATO, DT_NASCIMENTO, VL_TELEFONE, VL_EMAIL, DT_CADASTRO)" + "VALUES(?,?,?,?,?)");
+            stmt = conn.prepareStatement(sql);
+            
+            stmt.setString(1, nome);
+            stmt.setString(2, dataNasc);
+            stmt.setString(3, telefone);
+            stmt.setString(4, email);
+            stmt.setObject(5, dataAtual);
+            
+            stmt.execute();
+            
             System.out.println("Contato inserido com sucesso!");
         } catch (SQLException ex) {
             Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            if (stmt != null) {
+            if (stmt != null) { 
                 try {
                     stmt.close();
                 } catch (SQLException ex) {
